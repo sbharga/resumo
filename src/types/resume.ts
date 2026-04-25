@@ -28,6 +28,20 @@ export type ResumeJSON = {
   }
 }
 
+export type ATSScore = {
+  overall: number
+  sections: {
+    keywords: number
+    skills: number
+    experience: number
+    education: number
+  }
+  matchedKeywords: string[]
+  missingKeywords: string[]
+  strengths: string[]
+  gaps: string[]
+}
+
 export type JobStatus =
   | 'Saved'
   | 'Applied'

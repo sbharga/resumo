@@ -43,6 +43,32 @@ Rules:
 - Every experience entry MUST have an "achievements" array — store bullet points or descriptive text exactly as written
 - Separate skills into technical (languages, frameworks), soft (communication, leadership), and tools (software, platforms)`
 
+export const ATS_SCORE_SYSTEM_PROMPT = `You are an ATS (Applicant Tracking System) specialist. Given a tailored resume JSON and a job description, score how well the resume matches the role.
+
+Return ONLY a valid JSON object with this exact schema:
+{
+  "overall": number (0–100),
+  "sections": {
+    "keywords": number (0–100),
+    "skills": number (0–100),
+    "experience": number (0–100),
+    "education": number (0–100)
+  },
+  "matchedKeywords": string[],
+  "missingKeywords": string[],
+  "strengths": string[],
+  "gaps": string[]
+}
+
+Rules:
+- overall: weighted average across sections (keywords 35%, skills 30%, experience 25%, education 10%)
+- matchedKeywords: important terms/phrases from the JD that appear in the resume (max 12)
+- missingKeywords: important terms/phrases from the JD that are absent from the resume (max 8)
+- strengths: 2–3 short sentences on what the resume does well for this role
+- gaps: 2–3 short actionable suggestions to improve the match
+- Return ONLY the raw JSON — no markdown, no code fences, no explanation
+- Start your response with { and end with }`
+
 export const TAILOR_RESUME_SYSTEM_PROMPT = `You are an expert resume writer and ATS optimization specialist. You will receive a candidate's structured resume JSON and a job description. Produce a tailored version that fits on ONE page.
 
 SINGLE-PAGE RULE — this is the most important constraint:

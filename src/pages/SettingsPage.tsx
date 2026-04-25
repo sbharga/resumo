@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Plus, Trash2, Upload } from 'lucide-react'
@@ -29,36 +29,38 @@ export default function SettingsPage() {
   const [resume, setResume] = useState<ResumeJSON | null>(null)
   const [saving, setSaving] = useState(false)
 
-  const { isLoading } = useQuery({
+  const { data: settingsData, isLoading } = useQuery({
     queryKey: ['settings-data', user?.id],
     queryFn: async () => {
       const [{ data: prof }, { data: base }] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user!.id).single(),
         supabase.from('base_resumes').select('structured_content').eq('user_id', user!.id).maybeSingle(),
       ])
-
-      setProfile({
-        full_name: prof?.full_name ?? '',
-        email: prof?.email ?? user?.email ?? '',
-        phone: prof?.phone ?? '',
-        location: prof?.location ?? '',
-        linkedin_url: prof?.linkedin_url ?? '',
-        portfolio_url: prof?.portfolio_url ?? '',
-      })
-
-      setResume(base?.structured_content ?? {
-        personalInfo: { fullName: '', email: '', phone: '', location: '' },
-        summary: '',
-        experience: [],
-        education: [],
-        skills: { technical: [], soft: [], tools: [] },
-      })
-
       return { prof, base }
     },
     enabled: !!user,
     staleTime: Infinity,
   })
+
+  useEffect(() => {
+    if (!settingsData) return
+    const { prof, base } = settingsData
+    setProfile({
+      full_name: prof?.full_name ?? '',
+      email: prof?.email ?? user?.email ?? '',
+      phone: prof?.phone ?? '',
+      location: prof?.location ?? '',
+      linkedin_url: prof?.linkedin_url ?? '',
+      portfolio_url: prof?.portfolio_url ?? '',
+    })
+    setResume(base?.structured_content ?? {
+      personalInfo: { fullName: '', email: '', phone: '', location: '' },
+      summary: '',
+      experience: [],
+      education: [],
+      skills: { technical: [], soft: [], tools: [] },
+    })
+  }, [settingsData, user?.email])
 
   const save = async (section?: 'profile' | 'resume') => {
     setSaving(true)
