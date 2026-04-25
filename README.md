@@ -1,73 +1,43 @@
-# React + TypeScript + Vite
+# Resumo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Inspiration
 
-Currently, two official plugins are available:
+The modern job hunt is a full-time job. We noticed that the biggest bottleneck isn't finding roles—it's the soul-crushing task of manually tailoring your resume for every single application to beat the ATS (Applicant Tracking System). We built **Resumo** to give job seekers that time back, turning a manual hours-long process into a few seconds of AI magic.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What it does
 
-## React Compiler
+Resumo is an end-to-end career copilot. 
+- **Smart Parsing:** Upload your "master" resume once. Our engine uses Gemini's native PDF capabilities to parse it into a structured, searchable profile.
+- **Job Tracking:** Manage your entire pipeline with a Kanban-style dashboard. Drag jobs from "Saved" to "Applied" to "Interviewing."
+- **AI Tailoring:** With one click, generate a hyper-optimized resume tailored to a specific job description. It enforces a "one-page rule," selecting the most relevant experience and rewriting bullets for maximum impact.
+- **ATS Score:** Get instant feedback. Our analyzer scores your tailored resume against the JD, highlighting matched keywords, missing skills, and actionable gaps.
+- **Live Diff Viewer:** See exactly what the AI changed. Review edits side-by-side with your base resume before finalizing.
+- **Professional PDFs:** Export download-ready, ATS-friendly PDFs directly in your browser.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## How we built it
 
-## Expanding the ESLint configuration
+- **Frontend:** React 19 with Vite and Tailwind CSS 4.0 for a high-performance, modern UI.
+- **Backend:** Supabase handles Authentication and the PostgreSQL database.
+- **AI Engine:** Google Gemini (via `@google/genai`) powers our resume parsing, tailoring, and ATS scoring.
+- **State Management:** Zustand for lightweight, reactive editor state.
+- **PDF Generation:** `@react-pdf/renderer` for client-side document creation.
+- **Drag & Drop:** `@dnd-kit/core` for the interactive job board.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Challenges we ran into
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+PDFs are where data goes to die. We initially struggled with manual text extraction from complex resume layouts. After experimenting with traditional parsers, we moved to **Gemini's native PDF processing**, which significantly improved accuracy for non-standard layouts. Fine-tuning the "one-page" constraint was another hurdle—ensuring the AI prioritizes the *right* experience while keeping the output concise required extensive prompt engineering and strict JSON schema enforcement.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Accomplishments that we're proud of
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+We’re really stoked about the **Live Diff Viewer**. We didn't want the AI to be a "black box," so we built a feature that highlights exactly what the AI changed compared to your base resume. Combined with our **ATS Match Score**, it gives users total confidence that their resume is truly optimized before they hit "Download."
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## What we learned
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The secret to reliable AI applications is **structured output**. Moving from simple text prompts to enforcing strict JSON schemas (using Zod for validation) turned a "neat demo" into a predictable, robust tool. We also learned that providing users with "human-in-the-loop" editing capabilities is essential—AI handles the heavy lifting, but the user always has the final say.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## What's next for Resumo
+
+- **One-click Cover Letters:** Automatically generate matching cover letters for every tailored resume.
+- **Browser Extension:** Save job postings directly from LinkedIn, Indeed, and Greenhouse with one click.
+- **Interview Prep:** AI-generated mock interview questions based on your tailored resume and the job description.
+- **Template Library:** More professional PDF designs to choose from.
